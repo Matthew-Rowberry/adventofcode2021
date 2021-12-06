@@ -15,45 +15,63 @@ const testData = [
     "00010",
     "01010",
 ];
-let container = [];
-for (let index = 0; index < powerBinaries_1.powerBinaries.length; index++) {
-    // Creates a new array containing each binary value
-    const binaryArrays = powerBinaries_1.powerBinaries[index].split("");
-    // Pushes binary array into container array
-    container.push(binaryArrays);
-}
-let columns = [];
-for (let binaryPosition = 0; binaryPosition < 12; binaryPosition++) {
-    let singleColumn = [];
-    for (let i = 0; i < container.length; i++) {
-        singleColumn.push(container[i][binaryPosition]);
+// Creates a new array containing each binary value
+// Pushes binary array into container array
+const splitArrayIntoArrayOfValues = (data) => {
+    let arrayContainer = [];
+    for (let index = 0; index < data.length; index++) {
+        arrayContainer.push(data[index].split(""));
     }
-    columns.push(singleColumn);
-}
-function getOccurrence(array, value) {
+    return arrayContainer;
+};
+// Counts and returns number of times value appears in array
+const getOccurrenceOfValue = (array, value) => {
     return array.filter((v) => v === value).length;
-}
-let gammaArray = [];
-let gammaBinary = "";
-let gamma = 0;
-let epsilonArray = [];
-let epsilonBinary = "";
-let epsilon = 0;
-for (let index = 0; index < columns.length; index++) {
-    let Zero = getOccurrence(columns[index], "0");
-    let One = getOccurrence(columns[index], "1");
-    if (One > Zero) {
-        gammaArray.push(1);
-        epsilonArray.push(0);
+};
+// Takes array containing arrays of string values and returns columns of values
+// Loop value needs to be length of longest child array
+const createArrayOfColumnValues = (arrContainer) => {
+    const loop = arrContainer[0].length;
+    let columns = [];
+    for (let binaryPosition = 0; binaryPosition < loop; binaryPosition++) {
+        let singleColumn = [];
+        for (let i = 0; i < arrContainer.length; i++) {
+            singleColumn.push(arrContainer[i][binaryPosition]);
+        }
+        columns.push(singleColumn);
     }
-    else {
-        gammaArray.push(0);
-        epsilonArray.push(1);
+    return columns;
+};
+// Pass array of binary values to count number of times 0 or 1 appears in column
+// Returns deconstructed object containing two arrays of binary values
+const generatyBinaryInverseBinaryArrayFromColumn = (columnArray) => {
+    let primaryArray = [];
+    let inverseArray = [];
+    // Push either a 1 or 0 into array depending on occurence of value
+    for (let index = 0; index < columnArray.length; index++) {
+        const Zero = getOccurrenceOfValue(columnArray[index], "0");
+        const One = getOccurrenceOfValue(columnArray[index], "1");
+        if (One > Zero) {
+            primaryArray.push(1);
+            inverseArray.push(0);
+        }
+        else {
+            primaryArray.push(0);
+            inverseArray.push(1);
+        }
     }
-}
-gammaBinary = gammaArray.join("");
-epsilonBinary = epsilonArray.join("");
-gamma = parseInt(gammaBinary, 2);
-epsilon = parseInt(epsilonBinary, 2);
-const powerConsumption = gamma * epsilon;
+    return { primaryArray, inverseArray };
+};
+// Provide two binary arrays and multiple them together
+const multipleTwoBinaryValueArrays = (array1, array2) => {
+    let array1Binary = array1.join("");
+    let array2Binary = array2.join("");
+    let array1Value = parseInt(array1Binary, 2);
+    let array2Value = parseInt(array2Binary, 2);
+    return array1Value * array2Value;
+};
+const arrayOfBitValues = splitArrayIntoArrayOfValues(powerBinaries_1.powerBinaries);
+const columnValues = createArrayOfColumnValues(arrayOfBitValues);
+const { primaryArray, inverseArray } = generatyBinaryInverseBinaryArrayFromColumn(columnValues);
+const powerConsumption = multipleTwoBinaryValueArrays(primaryArray, inverseArray);
 console.log(powerConsumption);
