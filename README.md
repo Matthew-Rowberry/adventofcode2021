@@ -1,1 +1,1 @@
-babies first JS project
+baby's first JS project
