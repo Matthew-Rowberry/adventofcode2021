@@ -31,7 +31,7 @@ const splitArrayIntoArrayOfValues = (data: string[]): string[][] => {
 };
 
 // Counts and returns number of times value appears in array
-const getOccurrenceOfValue = (array: any[], value: number | string) => {
+const getOccurrenceOfValue = (array: any[], value: number | string): number => {
   return array.filter((v) => v === value).length;
 };
 
@@ -39,8 +39,6 @@ const getLengthOfLongestArrayElement = (array: string[][]) => {
   const longestElement = array.reduce((prev, curr) =>
     prev.length > curr.length ? prev : curr
   );
-
-  console.log(longestElement.length);
 
   return longestElement.length;
 };
@@ -80,9 +78,9 @@ const generatyBinaryInverseBinaryArrayFromColumn = (
 
   // Push either a 1 or 0 into array depending on occurence of value
   for (let index = 0; index < columnArray.length; index++) {
-    const Zero = getOccurrenceOfValue(columnArray[index], "0");
-    const One = getOccurrenceOfValue(columnArray[index], "1");
-    if (One > Zero) {
+    const zero = getOccurrenceOfValue(columnArray[index], "0");
+    const one = getOccurrenceOfValue(columnArray[index], "1");
+    if (one > zero) {
       primaryArray.push(1);
       inverseArray.push(0);
     } else {
@@ -95,7 +93,10 @@ const generatyBinaryInverseBinaryArrayFromColumn = (
 };
 
 // Provide two binary arrays and multiple them together
-const multipleTwoBinaryValueArrays = (array1: number[], array2: number[]) => {
+const multipleTwoBinaryValueArrays = (
+  array1: number[] | string[],
+  array2: number[] | string[]
+) => {
   let array1Binary = array1.join("");
   let array2Binary = array2.join("");
   let array1Value = parseInt(array1Binary, 2);
@@ -107,11 +108,86 @@ const multipleTwoBinaryValueArrays = (array1: number[], array2: number[]) => {
 const arrayOfBitValues = splitArrayIntoArrayOfValues(powerBinaries);
 const columnNumber = getLengthOfLongestArrayElement(arrayOfBitValues);
 const columnValues = createArrayOfColumnValues(arrayOfBitValues, columnNumber);
+
+// Part 1 Solution - Power Consumption
 const { primaryArray, inverseArray }: IPowerOptions =
   generatyBinaryInverseBinaryArrayFromColumn(columnValues);
+
 const powerConsumption = multipleTwoBinaryValueArrays(
   primaryArray,
   inverseArray
 );
+// console.log(powerConsumption);
 
-console.log(powerConsumption);
+// Part 2 Solution
+// Calculates whether 1 or 0 is the most common in binary array when compared against column values
+const keepBinaryMatchingIndexCommonInColumn = (
+  binaryArray: string[][],
+  columnsArray: string[][],
+  columnIndex: number,
+  common: "most" | "least"
+) => {
+  const zero = getOccurrenceOfValue(columnsArray[columnIndex], "0");
+  const one = getOccurrenceOfValue(columnsArray[columnIndex], "1");
+  let filterIndex: "1" | "0";
+  switch (common) {
+    case "most":
+      filterIndex = one >= zero ? "1" : "0";
+      break;
+    case "least":
+      filterIndex = zero <= one ? "0" : "1";
+      break;
+  }
+
+  return binaryArray.filter((row) => {
+    return row[columnIndex] === filterIndex;
+  });
+};
+
+// Takes original binary array, array of column values, and common value
+// Iterates through original binary, filtering out most or least common
+// Eventually returns last filtered binary
+const reduceArrayBasedOnColumnLength = (
+  binaryArray: string[][],
+  columnsArray: string[][],
+  common: "most" | "least"
+) => {
+  let reducedArray = binaryArray;
+
+  for (let index = 0; index < columnsArray.length; index++) {
+    let newColumnsArray = createArrayOfColumnValues(
+      reducedArray,
+      columnsArray.length
+    );
+    reducedArray = keepBinaryMatchingIndexCommonInColumn(
+      reducedArray,
+      newColumnsArray,
+      index,
+      common
+    );
+
+    if (reducedArray.length === 1) return reducedArray[0];
+  }
+
+  return reducedArray[0];
+};
+
+const oxygenGenRate = reduceArrayBasedOnColumnLength(
+  arrayOfBitValues,
+  columnValues,
+  "most"
+);
+
+const coScrubberRare = reduceArrayBasedOnColumnLength(
+  arrayOfBitValues,
+  columnValues,
+  "least"
+);
+
+const lifeSupportRating = multipleTwoBinaryValueArrays(
+  oxygenGenRate,
+  coScrubberRare
+);
+
+//Answer
+console.log(lifeSupportRating);
