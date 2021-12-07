@@ -121,12 +121,13 @@ const powerConsumption = multipleTwoBinaryValueArrays(
 
 // Part 2 Solution
 // Calculates whether 1 or 0 is the most common in binary array when compared against column values
+// Returns values in array that have matching filterIndex
 const keepBinaryMatchingIndexCommonInColumn = (
   binaryArray: string[][],
   columnsArray: string[][],
   columnIndex: number,
   common: "most" | "least"
-) => {
+): string[][] => {
   const zero = getOccurrenceOfValue(columnsArray[columnIndex], "0");
   const one = getOccurrenceOfValue(columnsArray[columnIndex], "1");
   let filterIndex: "1" | "0";
@@ -151,7 +152,7 @@ const reduceArrayBasedOnColumnLength = (
   binaryArray: string[][],
   columnsArray: string[][],
   common: "most" | "least"
-) => {
+): string[] | number[] => {
   let reducedArray = binaryArray;
 
   for (let index = 0; index < columnsArray.length; index++) {
