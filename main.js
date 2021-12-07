@@ -13,4 +13,4 @@ const powerBinaries = fs
     .readFileSync("dayThree/data.txt")
     .toString()
     .split("\n");
-fs.writeFileSync("dayThree/powerBinaries.js", JSON.stringify(powerBinaries));
+// fs.writeFileSync("dayThree/powerBinaries.js", JSON.stringify(powerBinaries));

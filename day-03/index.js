@@ -28,12 +28,16 @@ const splitArrayIntoArrayOfValues = (data) => {
 const getOccurrenceOfValue = (array, value) => {
     return array.filter((v) => v === value).length;
 };
+const getLengthOfLongestArrayElement = (array) => {
+    const longestElement = array.reduce((prev, curr) => prev.length > curr.length ? prev : curr);
+    console.log(longestElement.length);
+    return longestElement.length;
+};
 // Takes array containing arrays of string values and returns columns of values
 // Loop value needs to be length of longest child array
-const createArrayOfColumnValues = (arrContainer) => {
-    const loop = arrContainer[0].length;
+const createArrayOfColumnValues = (arrContainer, numberOfColumns) => {
     let columns = [];
-    for (let binaryPosition = 0; binaryPosition < loop; binaryPosition++) {
+    for (let binaryPosition = 0; binaryPosition < numberOfColumns; binaryPosition++) {
         let singleColumn = [];
         for (let i = 0; i < arrContainer.length; i++) {
             singleColumn.push(arrContainer[i][binaryPosition]);
@@ -71,7 +75,8 @@ const multipleTwoBinaryValueArrays = (array1, array2) => {
     return array1Value * array2Value;
 };
 const arrayOfBitValues = splitArrayIntoArrayOfValues(powerBinaries_1.powerBinaries);
-const columnValues = createArrayOfColumnValues(arrayOfBitValues);
+const columnNumber = getLengthOfLongestArrayElement(arrayOfBitValues);
+const columnValues = createArrayOfColumnValues(arrayOfBitValues, columnNumber);
 const { primaryArray, inverseArray } = generatyBinaryInverseBinaryArrayFromColumn(columnValues);
 const powerConsumption = multipleTwoBinaryValueArrays(primaryArray, inverseArray);
 console.log(powerConsumption);
